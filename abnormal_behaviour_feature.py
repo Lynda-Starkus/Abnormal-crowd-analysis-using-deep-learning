@@ -29,7 +29,6 @@ def angle_difference_feature(opt_flw,opt_flw_old):
 #   - the video frames will be passed through a mask filter first
 
 
-
 path_to_video = 'test.mp4'
 cap = cv.VideoCapture(path_to_video)
 
@@ -55,7 +54,7 @@ p0 = cv.goodFeaturesToTrack(old_gray, mask = None, **feature_params)
 # Create a mask image for drawing purposes
 mask = np.zeros_like(old_frame)
 
-# create a list to store the difference angle vector of each frame
+# create a list to store the differnce angles of each frame
 angle_diff_vid=[]
 
 # variable used to skip calculating the difference angle for the first frame 
@@ -63,7 +62,6 @@ frame_num = 0
 
 while(1):
     ret,frame = cap.read()
-    print(frame_num)
     frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
     # calculate optical flow
@@ -83,7 +81,11 @@ while(1):
     ### Calculate the difference angle
     if frame_num!=0 :
         opt_flw_old = opt_flw_old[st==1]
-        angle_diff_vid.append(angle_difference_feature(opt_flw,opt_flw_old))
+        angle_diff_frame = angle_difference_feature(opt_flw,opt_flw_old)
+        angle_diff_frame[::-1].sort()
+        angle_diff_frame = angle_diff_frame[0:101]
+        angle_diff_vid.append(angle_diff_frame)
+        
         
     # Now update the previous frame and previous points
     old_gray = frame_gray.copy()
@@ -96,4 +98,3 @@ while(1):
     if frame_num == 0:
         frame_num= frame_num + 1
     
-
